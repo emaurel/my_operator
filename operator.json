@@ -4,7 +4,6 @@
     "tags": ["template"],
     "authors": ["tercen"],
     "urls": ["https://github.com/tercen/template-python-operator"],
-    "container":"ghcr.io/tercen/template-python-operator:latest",
     "properties": [
         {
             "kind": "DoubleProperty",
