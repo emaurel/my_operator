@@ -8,7 +8,7 @@ df = (
     .select(['.y', '.ci', '.ri'], df_lib="pandas")
     .groupby(['.ci','.ri'], as_index=False)
     .mean()
-    .multiply(2)
+    .mul(10)
     .rename(columns={".y":"mean"})
     .astype({".ci": np.int32, ".ri": np.int32})
 )
