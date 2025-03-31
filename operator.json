@@ -1,5 +1,5 @@
 {
-    "name": "Emaurel operator",
+    "name": "my_compressor",
     "description": "Mean operator implemented in Python",
     "tags": ["template"],
     "authors": ["tercen"],
