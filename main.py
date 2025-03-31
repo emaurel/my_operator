@@ -52,7 +52,7 @@ def k_means(nb_colors, pixels, max_iter) :
             for el in clusters[i] :
                 mean += el[:3]
             if len(clusters[i]) != 0:
-                mean //= len(clusters[i])
+                mean /= len(clusters[i])
             new_colors[i] = mean
 
         for color, new_color in zip(colors, new_colors):
@@ -99,9 +99,9 @@ groups[:, :, 1:] = np.tile(extra_cols[:, np.newaxis, :], (1, 3, 1))
 # Step 3: Flatten back to original shape
 df = groups.reshape(-1, 3)
 
-dataset = pd.DataFrame(df, columns=['.centroid', '.ci', '.ri'])
+dataset = pd.DataFrame(df, columns=['centroid', '.ci', '.ri'])
 
-dataset = dataset.astype({'.centroid' : 'int32', '.ci': 'int32', '.ri': 'int32'})
+dataset = dataset.astype({'.ci': 'int32', '.ri': 'int32'})
 
 
 print("done")
