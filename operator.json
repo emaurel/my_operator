@@ -75,6 +75,21 @@
                                 "factors": []
                             }
                         ]
+                    },
+                    {
+                        "kind": "AxisSpec",
+                        "metaFactors": [
+                            {
+                                "kind": "MetaFactor",
+                                "name": "color",
+                                "type": "numeric",
+                                "description": "The pixel colors",
+                                "ontologyMapping": "y-axis",
+                                "crosstabMapping": "color",
+                                "cardinality": "1",
+                                "factors": []
+                            }
+                        ]
                     }
                 ]
             }
