@@ -12,15 +12,15 @@ tercenCtx = ctx.TercenContext(
     serviceUri = "http://127.0.0.1:5402/" # if using the local Tercen instance 
 )
 
-NB_COLORS = 5
+NB_COLORS = 2
 MAX_ITER = 15
-PRECISION = 1
+PRECISION = 1000
 
 print(json.dumps(tercenCtx.cubeQuery.toJson()["operatorSettings"], indent = 2))
 propertyValues = tercenCtx.cubeQuery.toJson()["operatorSettings"]["operatorRef"]["propertyValues"]
-NB_COLORS = int(propertyValues[0]["value"])
+""" NB_COLORS = int(propertyValues[0]["value"])
 MAX_ITER = int(propertyValues[1]["value"])
-PRECISION = float(propertyValues[2]["value"])  
+PRECISION = float(propertyValues[2]["value"])   """
 print(NB_COLORS, MAX_ITER, PRECISION)
 
 df = tercenCtx.select(['.y', '.ci', '.ri'], df_lib="pandas").values
@@ -62,7 +62,7 @@ def k_means(nb_colors, pixels, max_iter) :
             for el in clusters[i] :
                 mean += el[:3]
             if len(clusters[i]) != 0:
-                mean /= len(clusters[i])
+                mean //= len(clusters[i])
             new_colors[i] = mean
 
         for color, new_color in zip(colors, new_colors):
@@ -111,6 +111,28 @@ groups[:, :, 1:] = np.tile(extra_cols[:, np.newaxis, :], (1, 3, 1))
 
 # Step 3: Flatten back to original shape
 df = groups.reshape(-1, 3)
+
+data = df
+
+n_groups = len(data) // 3
+groups = data.reshape(n_groups, 3, 3)
+
+# Step 2: Extract R, G, B values and coordinates
+rgb_values = groups[:, :, 0]  # R, G, B values from first column
+coords = groups[:, 0, 1:]     # X, Y from first row of each group (they're all same)
+
+# Step 3: Convert RGB to hex
+# Convert to integers and ensure they're in 0-255 range
+rgb_int = rgb_values.astype(int).clip(0, 255)
+
+# Calculate hex values as integers (could also format as strings with '#')
+hex_values = (rgb_int[:, 0] << 16) + (rgb_int[:, 1] << 8) + rgb_int[:, 2]
+hex_values = hex_values.reshape(-1, 1)
+
+print(hex_values.shape)
+print(coords.shape)
+
+df = np.hstack((hex_values, coords))
 
 dataset = pd.DataFrame(df, columns=['centroid', '.ci', '.ri'])
 
