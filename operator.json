@@ -1,10 +1,16 @@
 {
     "name": "my_compressor",
     "description": "Mean operator implemented in Python",
-    "tags": ["template"],
-    "authors": ["tercen"],
-    "urls": ["https://github.com/tercen/template-python-operator"],
-    "container":"ghcr.io/emaurel/my_operator:main",
+    "tags": [
+        "template"
+    ],
+    "authors": [
+        "tercen"
+    ],
+    "urls": [
+        "https://github.com/tercen/template-python-operator"
+    ],
+    "container": "ghcr.io/emaurel/my_operator:main",
     "properties": [
         {
             "kind": "DoubleProperty",
@@ -24,5 +30,54 @@
             "defaultValue": 0.1,
             "description": "The precision of the compression, the smaller the more precise"
         }
-    ]
+    ],
+    "operatorSpec": {
+        "kind": "OperatorSpec",
+        "ontologyUri": "https://tercen.com/_ontology/tercen",
+        "ontologyVersion": "0.0.1",
+        "inputSpecs": [
+            {
+                "kind": "CrosstabSpec",
+                "metaFactors": [
+                    {
+                        "kind": "MetaFactor",
+                        "name": "Y Coordinate",
+                        "type": "",
+                        "description": "This factor will be used for the Y coordinate of pixels",
+                        "ontologyMapping": "page",
+                        "crosstabMapping": "row",
+                        "cardinality": "1",
+                        "factors": []
+                    },
+                    {
+                        "kind": "MetaFactor",
+                        "name": "X Coordinate",
+                        "type": "",
+                        "description": "This factor will be used for the X coordinate of pixels",
+                        "ontologyMapping": "sample",
+                        "crosstabMapping": "column",
+                        "cardinality": "1",
+                        "factors": []
+                    }
+                ],
+                "axis": [
+                    {
+                        "kind": "AxisSpec",
+                        "metaFactors": [
+                            {
+                                "kind": "MetaFactor",
+                                "name": "pixels",
+                                "type": "numeric",
+                                "description": "The pixel values",
+                                "ontologyMapping": "y-axis",
+                                "crosstabMapping": "y",
+                                "cardinality": "1",
+                                "factors": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
 }
