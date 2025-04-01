@@ -114,7 +114,7 @@ df = groups.reshape(-1, 3)
 
 dataset = pd.DataFrame(df, columns=['centroid', '.ci', '.ri'])
 
-dataset = dataset.astype({'.ci': 'int32', '.ri': 'int32'})
+dataset = dataset.astype({'centroid' : 'int32', '.ci': 'int32', '.ri': 'int32'})
 
 
 print("done")
