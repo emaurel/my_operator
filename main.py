@@ -18,9 +18,9 @@ PRECISION = 1000
 
 print(json.dumps(tercenCtx.cubeQuery.toJson()["operatorSettings"], indent = 2))
 propertyValues = tercenCtx.cubeQuery.toJson()["operatorSettings"]["operatorRef"]["propertyValues"]
-""" NB_COLORS = int(propertyValues[0]["value"])
+NB_COLORS = int(propertyValues[0]["value"])
 MAX_ITER = int(propertyValues[1]["value"])
-PRECISION = float(propertyValues[2]["value"])   """
+PRECISION = float(propertyValues[2]["value"])  
 print(NB_COLORS, MAX_ITER, PRECISION)
 
 df = tercenCtx.select(['.y', '.ci', '.ri'], df_lib="pandas").values
