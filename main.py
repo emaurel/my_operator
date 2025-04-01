@@ -21,6 +21,7 @@ print(json.dumps(propertyValues[0]["value"], indent = 2))
 NB_COLORS = propertyValues[0]["value"]
 MAX_ITER = propertyValues[1]["value"]
 PRECISION = propertyValues[2]["value"]  
+print(NB_COLORS, MAX_ITER, PRECISION)
 
 df = tercenCtx.select(['.y', '.ci', '.ri'], df_lib="pandas").values
 groups = df.reshape(-1, 3, 3)  # Group every 3 rows

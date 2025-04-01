@@ -7,13 +7,13 @@
     "container":"ghcr.io/emaurel/my_operator:main",
     "properties": [
         {
-            "kind": "IntProperty",
+            "kind": "DoubleProperty",
             "name": "ColorNumber",
             "defaultValue": 3,
             "description": "The number of color the image will be compressed to"
         },
         {
-            "kind": "IntProperty",
+            "kind": "DoubleProperty",
             "name": "MaxIteration",
             "defaultValue": 15,
             "description": "The maximum number of iteration"
