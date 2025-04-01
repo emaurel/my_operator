@@ -6,7 +6,7 @@ import pandas as pd
 
 tercenCtx = ctx.TercenContext(
     workflowId="241160841cead65995c0c45d0a011ce8",
-    stepId="6b502ac2-406d-40d5-af29-493a6dccbeef",
+    stepId="0ae6a9ae-e827-47f5-8a9b-78152f81112c",
     username="admin", # if using the local Tercen instance
     password="admin", # if using the local Tercen instance
     serviceUri = "http://127.0.0.1:5402/" # if using the local Tercen instance 
@@ -16,21 +16,25 @@ NB_COLORS = 2
 MAX_ITER = 15
 PRECISION = 1000
 
-print(json.dumps(tercenCtx.cubeQuery.toJson()["operatorSettings"], indent = 2))
 propertyValues = tercenCtx.cubeQuery.toJson()["operatorSettings"]["operatorRef"]["propertyValues"]
 NB_COLORS = int(propertyValues[0]["value"])
 MAX_ITER = int(propertyValues[1]["value"])
-PRECISION = float(propertyValues[2]["value"])  
+#PRECISION = float(propertyValues[2]["value"])  
 print(NB_COLORS, MAX_ITER, PRECISION)
 
-df = tercenCtx.select(['.y', '.ci', '.ri'], df_lib="pandas").values
-groups = df.reshape(-1, 3, 3)  # Group every 3 rows
-pixels = np.hstack([
-    groups[:, :, 0],           # Take all first columns
-    groups[:, 0, 1:3]          # Take columns 1 and 2 from first row of each group
-])
+data = tercenCtx.select(['.y', '.ci', '.ri'], df_lib="pandas").values
+data = np.array(data, dtype=np.uint32)
 
+R = (data[:, 0] >> 16) & 0xFF
+G = (data[:, 0] >> 8) & 0xFF
+B = data[:, 0] & 0xFF
 
+X = data[:, 1]
+Y = data[:, 2]
+
+pixels = np.column_stack((R, G, B, X, Y))
+
+print(pixels)
 
 def k_means(nb_colors, pixels, max_iter) :
     colors = []
@@ -97,42 +101,22 @@ print("done clustering")
 
 result = clusters.copy()
 
-# Update r, g, b values from clusters where coordinates match
+data = np.array(result, dtype=np.uint32)
 
-n_groups = pixels.shape[0]  # Number of groups
-first_cols = pixels[:, 0:3]  # The three first columns (r values)
-extra_cols = pixels[:, 3:5]  # The two extra columns that were from first row
+# Extract R, G, B, X, Y
+R = data[:, 0]
+G = data[:, 1]
+B = data[:, 2]
+X = data[:, 3]
+Y = data[:, 4]
 
-# Step 2: Reconstruct the original 3x3 groups
-groups = np.zeros((n_groups, 3, 3))  # Create empty array for groups
-groups[:, :, 0] = first_cols  # Put back all first columns
-groups[:, 0, 1:3] = extra_cols  # Put extra columns back in first row only
-groups[:, :, 1:] = np.tile(extra_cols[:, np.newaxis, :], (1, 3, 1))
+# Combine R, G, B into ColorCode (0xRRGGBB)
+# Shift R left 16 bits, G left 8 bits, and OR them with B
+ColorCode = (R << 16) | (G << 8) | B
 
-# Step 3: Flatten back to original shape
-df = groups.reshape(-1, 3)
-
-data = df
-
-n_groups = len(data) // 3
-groups = data.reshape(n_groups, 3, 3)
-
-# Step 2: Extract R, G, B values and coordinates
-rgb_values = groups[:, :, 0]  # R, G, B values from first column
-coords = groups[:, 0, 1:]     # X, Y from first row of each group (they're all same)
-
-# Step 3: Convert RGB to hex
-# Convert to integers and ensure they're in 0-255 range
-rgb_int = rgb_values.astype(int).clip(0, 255)
-
-# Calculate hex values as integers (could also format as strings with '#')
-hex_values = (rgb_int[:, 0] << 16) + (rgb_int[:, 1] << 8) + rgb_int[:, 2]
-hex_values = hex_values.reshape(-1, 1)
-
-print(hex_values.shape)
-print(coords.shape)
-
-df = np.hstack((hex_values, coords))
+# Combine into new array: [[ColorCode, X, Y], ...]
+df = np.column_stack((ColorCode, X, Y))
+print(df)
 
 dataset = pd.DataFrame(df, columns=['centroid', '.ci', '.ri'])
 
