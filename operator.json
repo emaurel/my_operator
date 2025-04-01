@@ -73,12 +73,7 @@
                                 "crosstabMapping": "y",
                                 "cardinality": "1",
                                 "factors": []
-                            }
-                        ]
-                    },
-                    {
-                        "kind": "AxisSpec",
-                        "metaFactors": [
+                            },
                             {
                                 "kind": "MetaFactor",
                                 "name": "color",
