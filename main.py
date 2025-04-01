@@ -2,6 +2,8 @@ from tercen.client import context as ctx
 import numpy as np
 import json
 import pandas as pd
+
+
 tercenCtx = ctx.TercenContext(
     workflowId="241160841cead65995c0c45d0a011ce8",
     stepId="6b502ac2-406d-40d5-af29-493a6dccbeef",
@@ -9,10 +11,16 @@ tercenCtx = ctx.TercenContext(
     password="admin", # if using the local Tercen instance
     serviceUri = "http://127.0.0.1:5402/" # if using the local Tercen instance 
 )
-NB_COLORS = 5
-MAX_ITER = 100
 
-#print(json.dumps(tercenCtx.cubeQuery.toJson(), indent = 2))
+NB_COLORS = 5
+MAX_ITER = 15
+PRECISION = 1
+
+propertyValues = tercenCtx.cubeQuery.toJson()["operatorSettings"]["operatorRef"]["propertyValues"]
+print(json.dumps(propertyValues[0]["value"], indent = 2)) 
+NB_COLORS = propertyValues[0]["value"]
+MAX_ITER = propertyValues[1]["value"]
+PRECISION = propertyValues[2]["value"]  
 
 df = tercenCtx.select(['.y', '.ci', '.ri'], df_lib="pandas").values
 groups = df.reshape(-1, 3, 3)  # Group every 3 rows
@@ -35,6 +43,7 @@ def k_means(nb_colors, pixels, max_iter) :
 
     while not converged and iteration < max_iter:
         iteration += 1
+        print("Iteration", iteration)
         colors = new_colors.copy()
         clusters = [[] for i in range(nb_colors)]
         #pixels is an array of pixels, each pixel is an array of 5 elements (R, G, B, X, Y)
@@ -56,16 +65,22 @@ def k_means(nb_colors, pixels, max_iter) :
             new_colors[i] = mean
 
         for color, new_color in zip(colors, new_colors):
-            if np.linalg.norm(color - new_color) < .1:
+            print(np.linalg.norm(color - new_color))
+            if np.linalg.norm(color - new_color) < PRECISION:
                 converged = True
+            else :
+                converged = False
+                break
     if iteration >= max_iter:
         print("Max iteration reached")
 
+    print("Converged in", iteration, "iterations")
     for i in range(nb_colors):
         for j in range(len(clusters[i])):
             clusters[i][j][:3] = colors[i]
         if clusters[i] == []:
             clusters[i] = np.array([[0, 0, 0, 0, 0]])
+            print("Empty cluster")
     #the pixels are sorted by cluster, first regroup all the clusters in one array
     clusters = np.concatenate(clusters)
     sorted_id = np.lexsort((clusters[:, 3], clusters[:, 4]))
@@ -77,14 +92,11 @@ def k_means(nb_colors, pixels, max_iter) :
 
 
 clusters, colors = k_means(NB_COLORS, pixels, MAX_ITER)
+print("done clustering")
 
-result = pixels.copy()
+result = clusters.copy()
 
 # Update r, g, b values from clusters where coordinates match
-for cluster in clusters:
-    mask = (pixels[:, 3] == cluster[3]) & (pixels[:, 4] == cluster[4])
-    result[mask, 0:3] = cluster[0:3]
-
 
 n_groups = pixels.shape[0]  # Number of groups
 first_cols = pixels[:, 0:3]  # The three first columns (r values)
