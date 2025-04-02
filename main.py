@@ -67,7 +67,9 @@ def k_means(nb_colors, pixels, max_iter) :
                 mean += el[:3]
             if len(clusters[i]) != 0:
                 mean //= len(clusters[i])
-            new_colors[i] = mean
+                new_colors[i] = mean
+            else :
+                new_colors[i] = np.random.randint(0, 255, 3)
 
         for color, new_color in zip(colors, new_colors):
             print(np.linalg.norm(color - new_color))
