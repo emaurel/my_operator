@@ -122,7 +122,7 @@ print(df)
 
 dataset = pd.DataFrame(df, columns=['newColors', 'centroids', '.ci', '.ri'])
 
-dataset = dataset.astype({'newColors' : 'float', 'centroid' : 'int32', '.ci': 'int32', '.ri': 'int32'})
+dataset = dataset.astype({'newColors' : 'float', 'centroids' : 'int32', '.ci': 'int32', '.ri': 'int32'})
 
 
 print("done")
