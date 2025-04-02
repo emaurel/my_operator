@@ -19,7 +19,7 @@ PRECISION = 1000
 propertyValues = tercenCtx.cubeQuery.toJson()["operatorSettings"]["operatorRef"]["propertyValues"]
 NB_COLORS = int(propertyValues[0]["value"])
 MAX_ITER = int(propertyValues[1]["value"])
-#PRECISION = float(propertyValues[2]["value"])  
+PRECISION = float(propertyValues[2]["value"])  
 print(NB_COLORS, MAX_ITER, PRECISION)
 
 data = tercenCtx.select(['.y', '.ci', '.ri'], df_lib="pandas").values
@@ -116,11 +116,13 @@ ColorCode = (R << 16) | (G << 8) | B
 
 # Combine into new array: [[ColorCode, X, Y], ...]
 df = np.column_stack((ColorCode, X, Y))
+df = np.column_stack((ColorCode, df))
+
 print(df)
 
-dataset = pd.DataFrame(df, columns=['centroid', '.ci', '.ri'])
+dataset = pd.DataFrame(df, columns=['newColors', 'centroids', '.ci', '.ri'])
 
-dataset = dataset.astype({'centroid' : 'int32', '.ci': 'int32', '.ri': 'int32'})
+dataset = dataset.astype({'newColors' : 'float', 'centroid' : 'int32', '.ci': 'int32', '.ri': 'int32'})
 
 
 print("done")
