@@ -14,7 +14,7 @@ tercenCtx = ctx.TercenContext(
 
 NB_COLORS = 2
 MAX_ITER = 15
-PRECISION = 1000
+PRECISION = 10
 
 propertyValues = tercenCtx.cubeQuery.toJson()["operatorSettings"]["operatorRef"]["propertyValues"]
 NB_COLORS = int(propertyValues[0]["value"])
@@ -61,7 +61,7 @@ def k_means(nb_colors, pixels, max_iter) :
             min_distance = 255 * 3
             cluster = 0
             for i in range(nb_colors):
-                distance = np.linalg.norm(pixel[:3] - colors[i])
+                distance = get_distance_color(pixel[:3] - colors[i])
                 if distance < min_distance:
                     min_distance = distance
                     cluster = i
@@ -93,18 +93,22 @@ def k_means(nb_colors, pixels, max_iter) :
         if clusters[i] == []:
             clusters[i] = np.array([[0, 0, 0, 0, 0]])
             print("Empty cluster")
+    
+    
+    for i in range(nb_colors):
+        print("Cluster", i, ":", colors[i])
+        print("Number of pixels in cluster", i, ":", len(clusters[i]))
+    
     #the pixels are sorted by cluster, first regroup all the clusters in one array
     clusters = np.concatenate(clusters)
-    sorted_id = np.lexsort((clusters[:, 3], clusters[:, 4]))
-    clusters = clusters[sorted_id]
 
-    
     return clusters, colors
 
 
 
 clusters, colors = k_means(NB_COLORS, pixels, MAX_ITER)
 print("done clustering")
+print(clusters)
 
 result = clusters.copy()
 
