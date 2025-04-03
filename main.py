@@ -5,8 +5,8 @@ import pandas as pd
 
 
 tercenCtx = ctx.TercenContext(
-    workflowId="241160841cead65995c0c45d0a011ce8",
-    stepId="0ae6a9ae-e827-47f5-8a9b-78152f81112c",
+    workflowId="8ff431594994f3c5a5ecb2d85e05c9d2",
+    stepId="fb8187cb-ab5d-4b73-a110-c55a33e61d42",
     username="admin", # if using the local Tercen instance
     password="admin", # if using the local Tercen instance
     serviceUri = "http://127.0.0.1:5402/" # if using the local Tercen instance 
@@ -35,6 +35,11 @@ Y = data[:, 2]
 pixels = np.column_stack((R, G, B, X, Y))
 
 print(pixels)
+
+def get_distance_color(color1, color2):
+    color1 = np.array(color1, dtype=np.int64)
+    color2 = np.array(color2, dtype=np.int64)
+    return ((color1[0] - color2[0]) ** 2 + (color1[1] - color2[1]) ** 2 + (color1[2] - color2[2]) ** 2)**0.5
 
 def k_means(nb_colors, pixels, max_iter) :
     colors = []
@@ -72,8 +77,8 @@ def k_means(nb_colors, pixels, max_iter) :
                 new_colors[i] = np.random.randint(0, 255, 3)
 
         for color, new_color in zip(colors, new_colors):
-            print(np.linalg.norm(color - new_color))
-            if np.linalg.norm(color - new_color) < PRECISION:
+            print(get_distance_color(color, new_color))
+            if get_distance_color(color, new_color) < PRECISION:
                 converged = True
             else :
                 converged = False
