@@ -61,7 +61,7 @@ def k_means(nb_colors, pixels, max_iter) :
             min_distance = 255 * 3
             cluster = 0
             for i in range(nb_colors):
-                distance = get_distance_color(pixel[:3] - colors[i])
+                distance = get_distance_color(pixel[:3], colors[i])
                 if distance < min_distance:
                     min_distance = distance
                     cluster = i
